@@ -27,6 +27,11 @@ def save_to_file(ip):
   with open('report.txt', 'a') as file:
     file.write(f'{timestamp} ; {ip}\n')
 
+@app.before_request
+def get_client_ip():
+  global request  # Modify the global request object
+  request.client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
   return render_template('index.html')
@@ -43,7 +48,7 @@ def index():
 @app.route('/wp-includes/<path:path>', methods=['GET', 'POST'])
 @app.route('/wp-includes/', methods=['GET', 'POST'])
 def wp_vulnerability_scan(path=None):
-  ip = request.remote_addr
+  ip = request.client_ip
   if ip not in reported_ips or datetime.now() - reported_ips[ip] > REPORT_INTERVAL:
     save_to_file(ip)
     report_ip(ip, '18,19,21,15', 'Automated report for WordPress vulnerability scanning')
@@ -53,7 +58,7 @@ def wp_vulnerability_scan(path=None):
 @app.route('/.vscode/<path:path>', methods=['GET', 'POST'])
 @app.route('/.git/<path:path>', methods=['GET', 'POST'])
 def sensitive_folders_access(path=None):
-  ip = request.remote_addr
+  ip = request.client_ip
   if ip not in reported_ips or datetime.now() - reported_ips[ip] > REPORT_INTERVAL:
     save_to_file(ip)
     folder_name = request.path.split('/')[1]
@@ -64,7 +69,7 @@ def sensitive_folders_access(path=None):
 @app.before_request
 def check_path():
   if '../' in request.path:
-    ip = request.remote_addr
+    ip = request.client_ip
     if ip not in reported_ips or datetime.now() - reported_ips[ip] > REPORT_INTERVAL:
       save_to_file(ip)
       report_ip(ip, '18,19,21,15', 'Automated report for attempting to traverse directories')
@@ -73,7 +78,7 @@ def check_path():
 
 @app.route('/<path:filename>')
 def report_rules(filename):
-  ip = request.remote_addr
+  ip = request.client_ip
   if filename in ['xmlrpc.php', 'check.js', 'my1.php', '.env', 'admin.php', 'wlwmanifest.xml', '.DS_Store', '.htaccess', 'core.js', 'install.php', 'config.php', 'st.php', 'repeater.php', 'dropdown.php', 'cjfuns.php', 'file.php',]:
     if ip not in reported_ips or datetime.now() - reported_ips[ip] > REPORT_INTERVAL:
       save_to_file(ip)
