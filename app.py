@@ -82,7 +82,7 @@ def report_rules(filename):
   if filename in ['xmlrpc.php', 'check.js', 'my1.php', '.env', 'admin.php', 'wlwmanifest.xml', '.DS_Store', '.htaccess', 'core.js', 'install.php', 'config.php', 'st.php', 'repeater.php', 'dropdown.php', 'cjfuns.php', 'file.php', '_all_dbs', 'config.json', 'login.action', 'sftp.json']:
     if ip not in reported_ips or datetime.now() - reported_ips[ip] > REPORT_INTERVAL:
       save_to_file(ip)
-      report_ip(ip, '18,19,21,15', f'Automated report for accessing {filename}')
+      report_ip(ip, '18,19,21,15', f'Automated report for accessing {filename} on my Honeypot')
       reported_ips[ip] = datetime.now()
   return '404'
 
