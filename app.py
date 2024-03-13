@@ -1,13 +1,13 @@
+import os
 from flask import Flask, request, render_template
 import requests
 from datetime import datetime, timedelta
-import os
 
 app = Flask(__name__)
 
 ABUSEIPDB_API_KEY = os.environ.get('API_KEY', 'default_key')
-REPORT_INTERVAL = timedelta(minutes=15) # Interval for reporting the same IP
-reported_ips = {} # Dictionary to store reported IPs and their last report time
+REPORT_INTERVAL = timedelta(minutes=15)
+reported_ips = {}
 
 def report_ip(ip, categories, comment):
   url = 'https://api.abuseipdb.com/api/v2/report'
