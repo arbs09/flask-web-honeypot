@@ -37,9 +37,7 @@ def get_client_ip():
 def index():
   return render_template('index.html')
 
-
-
-@app.server.route("/robots.txt")
+@app.route("/robots.txt")
 def send_robots():
     return send_from_directory("assets", "robots.txt")
 
