@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, send_from_directory
 import requests
 from datetime import datetime, timedelta
 
@@ -37,6 +37,11 @@ def get_client_ip():
 def index():
   return render_template('index.html')
 
+
+
+@app.server.route("/robots.txt")
+def send_robots():
+    return send_from_directory("assets", "robots.txt")
 
 @app.route('/wp-login.php', methods=['GET', 'POST'])
 @app.route('/wp-info.php', methods=['GET', 'POST'])
