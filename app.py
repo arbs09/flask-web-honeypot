@@ -24,9 +24,11 @@ def report_ip(ip, categories, comment):
   return response.json()
 
 def save_to_file(ip):
-  timestamp = datetime.now().strftime('%Y.%m.%d %H:%M')
-  with open('report.txt', 'a') as file:
-    file.write(f'{timestamp} ; {ip}\n')
+    timestamp = datetime.now().strftime('%Y.%m.%d %H:%M')
+    if not os.path.exists('data'):
+        os.makedirs('data')
+    with open(os.path.join('data', 'report.txt'), 'a') as file:
+        file.write(f'{timestamp} ; {ip}\n')
 
 @app.before_request
 def get_client_ip():
