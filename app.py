@@ -35,6 +35,7 @@ def save_to_file(ip):
 def get_client_ip():
     global request  # Modify the global request object
     request.client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    request.user_agent = request.headers.get('X-Forwarded-User-Agent', None)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -85,7 +86,7 @@ def check_path():
 
 @app.before_request
 def check_user_agent():
-    user_agent = request.headers.get("User-Agent")
+    user_agent = request.user_agent
     if user_agent and any(malicious_agent in user_agent for malicious_agent in MALICIOUS_USER_AGENTS):
         ip = request.client_ip
         if ip not in reported_ips or datetime.now() - reported_ips[ip] > REPORT_INTERVAL:
