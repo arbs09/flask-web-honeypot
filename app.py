@@ -86,15 +86,12 @@ def check_path():
 @app.before_request
 def check_user_agent():
     user_agent = request.headers.get("User-Agent")
-    if user_agent:
-        for malicious_agent in MALICIOUS_USER_AGENTS:
-            if malicious_agent in user_agent:
-                ip = request.client_ip
-                if ip not in reported_ips or datetime.now() - reported_ips[ip] > REPORT_INTERVAL:
-                    save_to_file(ip)
-                    report_ip(ip, '18,19,21,15', f'Automated report for using malicious user-agent: {user_agent}')
-                    reported_ips[ip] = datetime.now()
-                break  # Exit the loop once a match is found
+    if user_agent and any(malicious_agent in user_agent for malicious_agent in MALICIOUS_USER_AGENTS):
+        ip = request.client_ip
+        if ip not in reported_ips or datetime.now() - reported_ips[ip] > REPORT_INTERVAL:
+            save_to_file(ip)
+            report_ip(ip, '18,19,21,15', f'Automated report for using malicious user-agent: {user_agent}')
+            reported_ips[ip] = datetime.now()
 
 @app.route('/<path:filename>')
 def report_rules(filename):
