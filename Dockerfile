@@ -1,5 +1,5 @@
 # Use the official Python image as a base
-FROM python:3.13.0b1-slim
+FROM python:3.13.0b2-slim
 
 # Set environment variables
 ENV FLASK_APP=app.py
